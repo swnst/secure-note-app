@@ -81,15 +81,17 @@ app.patch('/api/notes/:id', authenticateToken, async (req, res) => {
         });
 
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`[Upstream Error] PocketHost PATCH failed: ${response.status} - ${errorText}`);
-            return res.status(response.status).json({ error: `Upstream Error: ${errorText}` });
+            const errData = await response.json().catch(() => ({}));
+            // แปลงข้อความ Error ให้เป็นมิตรกับผู้ใช้
+            const cleanMessage = errData.message === "Only admins can perform this action."
+                ? "คุณไม่มีสิทธิ์ผู้ดูแลระบบในการแก้ไขข้อมูลนี้"
+                : (errData.message || "เกิดข้อผิดพลาดจากฐานข้อมูล");
+            return res.status(response.status).json({ error: cleanMessage });
         }
 
         const data = await response.json();
         res.status(200).json({ id: data.id, title: data.title, content: data.content });
     } catch (error) {
-        console.error(`[Server Error] PATCH /api/notes/:id - ${error.message}`);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -100,8 +102,11 @@ app.delete('/api/notes/:id', authenticateToken, async (req, res) => {
         const response = await fetch(`${POCKETHOST_URL}/${id}`, { method: 'DELETE' });
 
         if (!response.ok) {
-            if (response.status === 404) return res.status(404).json({ error: 'Not Found' });
-            throw new Error('Failed to delete record');
+            const errData = await response.json().catch(() => ({}));
+            const cleanMessage = errData.message === "Only admins can perform this action."
+                ? "คุณไม่มีสิทธิ์ผู้ดูแลระบบในการลบข้อมูลนี้"
+                : (errData.message || "เกิดข้อผิดพลาดในการลบข้อมูล");
+            return res.status(response.status).json({ error: cleanMessage });
         }
         res.status(200).json({ message: 'Note deleted successfully' });
     } catch (error) {

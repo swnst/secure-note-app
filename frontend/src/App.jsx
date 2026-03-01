@@ -108,8 +108,8 @@ function App() {
 
       if (res.status === 401) throw new Error('Unauthorized: Invalid Secret Token');
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || 'Failed to update note');
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to delete note');
       }
 
       setEditingId(null);

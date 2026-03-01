@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API_URL = 'http://localhost:3000/api/notes';
+const API_URL = import.meta.env.VITE_API_URL || 'https://securenote-api.onrender.com/api/notes';
 
 function App() {
   const [notes, setNotes] = useState([]);

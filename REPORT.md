@@ -24,3 +24,11 @@
 [cite_start]The `SECRET_TOKEN` is stored in the backend's `.env` file to enforce strict separation of configuration from source code[cite: 49]. The `.env` file is excluded from version control via `.gitignore`, ensuring secrets are never leaked to public repositories.
 
 [cite_start]**Consequences of Frontend Exposure:** If the `SECRET_TOKEN` were placed in the frontend code, it would be bundled into the static JavaScript files sent to the user's browser[cite: 50]. [cite_start]Anyone could simply open the browser's Developer Tools (Sources tab) or inspect network payloads, extract the token, and gain unauthorized access to create or delete notes on our backend API[cite: 50]. Storing it strictly on the server ensures only authorized operators possess the key.
+
+## 5. Bonus: Data Persistence (PocketHost API)
+Instead of using a local `.json` file which loses state across different deployment environments, this project integrates with the provided PocketHost API (`https://app-tracking.pockethost.io`). The backend node server was refactored to act as a secure proxy. When a user requests to create or delete a note, our Express backend securely validates the `SECRET_TOKEN` first, and upon successful authorization, communicates with the PocketHost database via the `fetch` API. This ensures notes survive server restarts and scaling events.
+
+## 6. Bonus: Cloud Deployment & HTTPS
+The application relies on a split-deployment architecture:
+- **Frontend (Vercel):** The React.js application is deployed to Vercel, which provides a globally distributed CDN and automatic HTTPS provisioning. The `VITE_API_URL` environment variable is configured in Vercel's dashboard to point to our production backend.
+- **Backend (Render):** The Node.js Express server is deployed as a Web Service on Render. Environment variables (`PORT` and `SECRET_TOKEN`) are securely injected via Render's dashboard. Render automatically wraps the application in an HTTPS layer (TLS termination), ensuring that our authorization headers and JSON payloads are encrypted in transit, neutralizing man-in-the-middle (MITM) attack vectors.

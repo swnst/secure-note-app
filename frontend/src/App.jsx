@@ -107,7 +107,10 @@ function App() {
       });
 
       if (res.status === 401) throw new Error('Unauthorized: Invalid Secret Token');
-      if (!res.ok) throw new Error('Failed to update note');
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to update note');
+      }
 
       setEditingId(null);
       fetchNotes();

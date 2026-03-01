@@ -81,13 +81,15 @@ app.patch('/api/notes/:id', authenticateToken, async (req, res) => {
         });
 
         if (!response.ok) {
-            if (response.status === 404) return res.status(404).json({ error: 'Not Found' });
-            throw new Error('Failed to update record');
+            const errorText = await response.text();
+            console.error(`[Upstream Error] PocketHost PATCH failed: ${response.status} - ${errorText}`);
+            return res.status(response.status).json({ error: `Upstream Error: ${errorText}` });
         }
 
         const data = await response.json();
         res.status(200).json({ id: data.id, title: data.title, content: data.content });
     } catch (error) {
+        console.error(`[Server Error] PATCH /api/notes/:id - ${error.message}`);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

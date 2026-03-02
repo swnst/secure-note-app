@@ -54,6 +54,6 @@ A lightweight, secure full-stack web application for managing text notes. Built 
 5. Open your browser and go to the local URL provided by Vite (usually `http://localhost:5173`).
 
 ## Usage
-- The app defaults to **Public Mode** (Local FS). You can test CRUD operations without a token.
-- Switch to **Instructor Mode** (PocketHost API) to interact with the persistent database. 
-- You will need to enter the `SECRET_TOKEN` in the UI to perform POST, PATCH, or DELETE operations in Instructor Mode.
+- The application features **Two-Way Data Routing**: Public Mode (Local FS) and Instructor Mode (PocketHost API).
+- **Authentication Requirement:** For security compliance, all data mutation operations (Create, Update, Delete) in **BOTH** modes strictly require the `SECRET_TOKEN`.
+- You must enter the valid `SECRET_TOKEN` in the UI context to unlock the ability to submit the form or modify existing records. Reading notes (GET) remains publicly accessible without a token across all modes.

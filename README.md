@@ -1,12 +1,18 @@
 # SecureNote Application
 
-A full-stack web application demonstrating client-server architecture, secure communication, and local data persistence.
+A lightweight, secure full-stack web application for managing text notes. Built with React (Frontend) and Express.js (Backend) to demonstrate client-server architecture, secure communication, and dynamic data routing.
+
+## Features
+- **Two-Way Data Routing**: Seamlessly switch between Local File System (Public Mode) and PocketHost API (Instructor Mode).
+- **Secure Operations**: Create, update, and delete actions are protected by a Secret Token.
+- **Modern UI/UX**: Features Dark Mode, Grid Layout, Markdown support, and Optimistic UI updates.
 
 ## Prerequisites
-- Node.js installed on your system.
-- npm (Node Package Manager).
+- [Node.js](https://nodejs.org/) (v16 or higher recommended)
+- npm or yarn
 
-## Backend Setup & Execution
+## 1. Backend Setup
+
 1. Navigate to the backend directory:
    ```bash
    cd backend
@@ -15,19 +21,21 @@ A full-stack web application demonstrating client-server architecture, secure co
    ```bash
    npm install
    ```
-3. Create a `.env` file in the `backend` directory (do not commit this file) with the following variables:
+3. Create a `.env` file in the `backend` directory and add your configuration:
    ```env
    PORT=3000
-   SECRET_TOKEN=your_custom_secret_token
+   SECRET_TOKEN=your_secret_password_here
    ```
-4. Start the backend server:
+   *(Note: Never commit the `.env` file to version control)*
+4. Start the server:
    ```bash
-   node server.js
+   npm start
    ```
-   The server will run on `http://localhost:3000`.
+   The backend will run on `http://localhost:3000`.
 
-## Frontend Setup & Execution
-1. Open a new terminal window and navigate to the frontend directory:
+## 2. Frontend Setup
+
+1. Open a new terminal and navigate to the frontend directory:
    ```bash
    cd frontend
    ```
@@ -35,8 +43,17 @@ A full-stack web application demonstrating client-server architecture, secure co
    ```bash
    npm install
    ```
-3. Start the Vite development server:
+3. Create a `.env` file in the `frontend` directory:
+   ```env
+   VITE_API_URL=http://localhost:3000/api/notes
+   ```
+4. Start the development server:
    ```bash
    npm run dev
    ```
-4. Open your browser and navigate to the local URL provided in the terminal (usually `http://localhost:5173`).
+5. Open your browser and go to the local URL provided by Vite (usually `http://localhost:5173`).
+
+## Usage
+- The app defaults to **Public Mode** (Local FS). You can test CRUD operations without a token.
+- Switch to **Instructor Mode** (PocketHost API) to interact with the persistent database. 
+- You will need to enter the `SECRET_TOKEN` in the UI to perform POST, PATCH, or DELETE operations in Instructor Mode.

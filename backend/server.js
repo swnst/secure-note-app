@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET_TOKEN = process.env.SECRET_TOKEN;
 
-const POCKETHOST_URL = 'https://app-tracking.pockethost.io/api/collections/notes/records';
+// const POCKETHOST_URL = 'https://app-tracking.pockethost.io/api/collections/notes/records';
 const DATA_FILE = path.join(__dirname, 'notes.json');
 
 app.use(cors());

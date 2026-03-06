@@ -231,8 +231,8 @@ function App() {
               <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-400 dark:bg-amber-500"></div>
               <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">System Token</label>
               <div className="relative">
-                <input type={showToken ? "text" : "password"} value={token} onChange={(e) => setToken(e.target.value)} placeholder="Enter secret token..." className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-3 pr-12 rounded-xl focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all [&::-ms-reveal]:hidden" />
-                <button type="button" onClick={() => setShowToken(!showToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <input type={showToken ? "text" : "password"} value={token} onChange={(e) => setToken(e.target.value)} placeholder="Enter secret token..." className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-3 pr-12 rounded-xl focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all placeholder-slate-400 dark:placeholder-slate-500 [&::-ms-reveal]:hidden" />
+                <button type="button" onClick={() => setShowToken(!showToken)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
                   {showToken ? <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg> : <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" /><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /><line x1="2" x2="22" y1="2" y2="22" /></svg>}
                 </button>
               </div>
@@ -243,9 +243,9 @@ function App() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
                 Create Document
               </h2>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Note Title" className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-3 mb-4 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition-all" required />
-              <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your content here... supports Markdown (e.g. **bold**, *italic*, `code`)" className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-3 mb-5 rounded-xl h-32 resize-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition-all font-mono text-sm" required />
-              <button type="submit" className="w-full bg-indigo-600 text-white font-bold px-6 py-3.5 rounded-xl hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 transition-all shadow-md shadow-indigo-200 dark:shadow-none flex justify-center items-center gap-2">
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Note Title" className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-3 mb-4 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition-all placeholder-slate-400 dark:placeholder-slate-500" required />
+              <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Supports Markdown (e.g. **bold**, *italic*, `code`)" className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-3 mb-5 rounded-xl h-32 resize-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition-all font-mono text-sm placeholder-slate-400 dark:placeholder-slate-500" required />
+              <button type="submit" disabled={isLoading || !title.trim() || !content.trim()} className="w-full bg-indigo-600 text-white font-bold px-6 py-3.5 rounded-xl hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed transition-all shadow-md shadow-indigo-200 dark:shadow-none flex justify-center items-center gap-2">
                 Save Document
               </button>
             </form>
@@ -276,7 +276,13 @@ function App() {
               <SkeletonLoader />
             ) : filteredNotes.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-80 bg-white/50 dark:bg-slate-800/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-300 dark:text-slate-600"><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="mb-4 text-slate-400 dark:text-slate-500">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
                 <p className="text-lg font-bold text-slate-500 dark:text-slate-400 mb-1">No Records Found</p>
                 <p className="text-sm">Create your first document using the form.</p>
               </div>

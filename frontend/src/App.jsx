@@ -300,6 +300,7 @@ function App() {
                         <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-2.5 rounded-lg h-full min-h-[120px] resize-none focus:ring-2 focus:ring-indigo-400 focus:outline-none text-slate-600 dark:text-slate-300 font-mono text-sm" />
                         <div className="flex gap-2 mt-2">
                           <button onClick={() => handleManualSave(note.id)} className="flex-1 bg-emerald-500 text-white font-bold py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm">Done</button>
+                          <button onClick={() => setEditingId(null)} className="flex-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-sm">Cancel</button>
                         </div>
                       </div>
                     ) : (

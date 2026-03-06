@@ -1,0 +1,41 @@
+ขออนุญาตส่ง Assignment โปรเจกต์ SecureNote Application ครับ โดยระบบได้รับการพัฒนาตามสถาปัตยกรรมที่กำหนด พร้อมทั้งบูรณาการส่วน Cloud Deployment และ Hybrid Data Persistence เป็นที่เรียบร้อยแล้วครับ
+
+1. ช่องทางการเข้าถึงรหัสต้นฉบับ
+สามารถตรวจสอบโครงสร้างโค้ด เอกสาร README.md และ REPORT.md ได้ที่ GitHub Repository:
+-> https://github.com/swnst/secure-note-app
+
+2. ช่องทางการทดสอบระบบจริง
+ระบบได้รับการติดตั้งบนสภาวะแวดล้อมคลาวด์แบบแยกส่วน (Frontend บน Vercel, Backend บน Render) สามารถเข้าทดสอบการทำงานผ่านโปรโตคอล HTTPS ได้ทันทีที่:
+-> https://secure-note-app-wheat.vercel.app
+-> System Token สำหรับทดสอบระบบ: secure_assignment_token_2026
+(หมายเหตุ: ระบบบังคับใช้การตรวจสอบสิทธิ์ ดังนั้นการทำ Data Mutation ทั้งใน Public Mode และ Instructor Mode จำเป็นต้องใส่ Token นี้เสมอ)
+
+3. สถาปัตยกรรมข้อมูลและวิธีการตรวจประเมิน
+ระบบถูกออกแบบให้รองรับการจัดเก็บข้อมูล 2 รูปแบบ ซึ่งควบคุมการสลับโหมดผ่าน State บนหน้า UI:
+- Public Mode (Local FS): ประมวลผลและจัดเก็บข้อมูลลงไฟล์ notes.json ผ่าน Node.js fs module
+- Instructor Mode (PocketHost API): ระบบ Backend จะทำหน้าที่เป็น Multiplexer (Proxy) เพื่อจัดการเส้นทางคำขอ (Routing) ไปยังฐานข้อมูล PocketHost ตามที่ระบุในโจทย์
+-> วิธีการตรวจประเมิน Instructor Mode: อาจารย์สามารถกดปุ่มสลับเป็น "Instructor Mode" บนหน้าเว็บ และใช้ System Token (ที่ระบุในข้อ 2) เพื่อทดสอบฟังก์ชัน Create, Update และ Delete ได้ทันที ข้อมูลจะถูกประมวลผลและส่งตรงไปยัง PocketHost โดยไม่ต้องตั้งค่าเพิ่มเติม
+
+4. ข้อจำกัดทางสถาปัตยกรรมคลาวด์
+Cold Start Latency: เนื่องจาก Backend ถูกติดตั้งบนแพลตฟอร์ม Render (Free Tier) คอนเทนเนอร์จะถูกระงับการทำงาน (Spin down) หากไม่มีการใช้งาน 15 นาที หากเกิดข้อผิดพลาด "Failed to load notes" ในการเรียกใช้งานครั้งแรก กรุณารอ 30-60 วินาทีเพื่อให้ระบบตื่นตัว แล้วรีเฟรชหน้าเว็บอีกครั้ง
+Ephemeral Storage: สำหรับการทดสอบ Public Mode บนสภาวะแวดล้อม Live Production ข้อมูลที่ถูกเขียนลงไฟล์ notes.json จะสูญหายเมื่อ Render เข้าสู่สภาวะ Spin down หรือรีสตาร์ท เนื่องจากข้อจำกัดด้านพื้นที่จัดเก็บชั่วคราวของระบบ Cloud การจัดเก็บข้อมูลแบบถาวรบน Live Production จะทำงานสมบูรณ์เฉพาะใน Instructor Mode เท่านั้น
+
+5. ขั้นตอนการเรียกใช้งานบนเครื่องส่วนตัว 
+หากต้องการคอมไพล์และทดสอบระบบในสภาวะแวดล้อมจำลอง กรุณาดำเนินการตามขั้นตอนต่อไปนี้:
+
+ส่วนที่ 1: การตั้งค่า Backend
+- เปิด Terminal และนำทางไปยังไดเรกทอรี: cd backend
+- ติดตั้ง Dependency: npm install
+- สร้างไฟล์ .env และกำหนดค่าตัวแปร:
+-- PORT=3000
+-- SECRET_TOKEN=<รหัสผ่านของคุณ>
+- เริ่มการทำงานของเซิร์ฟเวอร์: npm start (ระบบจะทำงานบน http://localhost:3000)
+
+ส่วนที่ 2: การตั้งค่า Frontend
+- เปิด Terminal หน้าต่างใหม่ และนำทางไปยังไดเรกทอรี: cd frontend
+- ติดตั้ง Dependency: npm install
+- สร้างไฟล์ .env และกำหนดค่าตัวแปรเส้นทาง API:
+-- VITE_API_URL=http://localhost:3000/api/notes
+- เริ่มการทำงานของไคลเอนต์: npm run dev (ระบบจะรันบน http://localhost:5173)
+
+ขอบคุณครับ

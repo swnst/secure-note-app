@@ -1,0 +1,34 @@
+ขออนุญาตส่ง Assignment โปรเจกต์ SecureNote Application ครับ โดยระบบได้รับการพัฒนาตามสถาปัตยกรรมที่กำหนด พร้อมทั้งบูรณาการส่วน Cloud Deployment และ Hybrid Data Persistence เป็นที่เรียบร้อยแล้วครับ
+
+1. ช่องทางการเข้าถึงรหัสต้นฉบับ (Source Code)
+สามารถตรวจสอบโครงสร้างโค้ด เอกสาร README.md และ REPORT.md ได้ที่ GitHub Repository: 
+-> https://github.com/swnst/secure-note-app
+
+2. ช่องทางการทดสอบระบบจริง (Live Production)
+ระบบได้รับการติดตั้งบนสภาวะแวดล้อมคลาวด์แบบแยกส่วน (Frontend บน Vercel, Backend บน Render) สามารถเข้าทดสอบการทำงานผ่านโปรโตคอล HTTPS ได้ทันทีที่:
+-> https://secure-note-app-wheat.vercel.app
+-> System Token สำหรับทดสอบระบบ: secure_assignment_token_2026
+(หมายเหตุ: กรุณานำ Token นี้กรอกในช่อง "System Token" บนหน้าเว็บ เพื่อรับสิทธิ์ในการทำ Data Mutation: POST, PATCH, DELETE)
+
+3. ข้อจำกัดทางสถาปัตยกรรมคลาวด์ (Known Technical Limitation)
+เนื่องจาก Backend Service ถูกติดตั้งบนแพลตฟอร์ม Render (Free Tier) เซิร์ฟเวอร์จะเข้าสู่สถานะจำศีล (Spin down) อัตโนมัติหากไม่มีการใช้งานเกิน 15 นาที หากอาจารย์เปิดใช้งานหน้าเว็บแล้วพบข้อผิดพลาด "Failed to load notes" หรือข้อมูลไม่ปรากฏในครั้งแรก (Cold Start) กรุณารอสักครู่ (ประมาณ 30-60 วินาที) แล้วทำการรีเฟรชหน้าเว็บอีกครั้งครับ
+
+4. ขั้นตอนการเรียกใช้งานบนเครื่องส่วนตัว (Local Environment Setup)
+หากต้องการคอมไพล์และทดสอบระบบบนเครื่อง Local กรุณาดำเนินการตามขั้นตอนต่อไปนี้:
+
+ส่วนที่ 1: การตั้งค่า Backend
+1. เปิด Terminal และนำทางไปยังไดเรกทอรี: cd backend
+2. ติดตั้ง Dependency: npm install
+3. สร้างไฟล์ .env และกำหนดค่าตัวแปร:
+-- PORT=3000
+-- SECRET_TOKEN=<รหัสผ่านของคุณ>
+4. เริ่มการทำงานของเซิร์ฟเวอร์: npm start (ระบบจะทำงานบน http://localhost:3000)
+
+ส่วนที่ 2: การตั้งค่า Frontend
+1. เปิด Terminal หน้าต่างใหม่ และนำทางไปยังไดเรกทอรี: cd frontend
+2. ติดตั้ง Dependency: npm install
+3. สร้างไฟล์ .env และกำหนดค่าตัวแปรเส้นทาง API:
+-- VITE_API_URL=http://localhost:3000/api/notes
+4. เริ่มการทำงานของไคลเอนต์: npm run dev (ระบบจะรันบน http://localhost:5173)
+
+ขอบคุณครับ

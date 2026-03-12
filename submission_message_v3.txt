@@ -1,6 +1,6 @@
 ขออนุญาตส่ง Assignment โปรเจกต์ SecureNote Application ครับ โดยระบบได้รับการพัฒนาตามสถาปัตยกรรมที่กำหนด พร้อมทั้งบูรณาการส่วน Cloud Deployment และ Hybrid Data Persistence เป็นที่เรียบร้อยแล้วครับ
 
-1. ช่องทางการเข้าถึงรหัสต้นฉบับ
+1. ช่องทางการเข้าถึงโค้ดต้นฉบับ
 สามารถตรวจสอบโครงสร้างโค้ด เอกสาร README.md และ REPORT.md ได้ที่ GitHub Repository:
 -> https://github.com/swnst/secure-note-app
 
@@ -9,7 +9,7 @@
 -> https://secure-note-app-wheat.vercel.app
 -> System Token สำหรับทดสอบระบบ (Dynamic Authentication):
     • ทดสอบ Public Mode (Local FS): กรอก Token secure_assignment_token_2026
-    • ทดสอบ Instructor Mode (PocketHost API): กรอก Token 20260301eink (ตามที่vอาจารย์กำหนด)
+    • ทดสอบ Instructor Mode (PocketHost API): กรอก Token 20260301eink (ตามที่อาจารย์กำหนด)
 (หมายเหตุ: ระบบบังคับใช้การตรวจสอบสิทธิ์เสมอ แต่ได้แยกระบบ Token ให้สอดคล้องกับฐานข้อมูลปลายทางในแต่ละโหมดอย่างอิสระ)
 
 3. สถาปัตยกรรมข้อมูลและวิธีการตรวจประเมิน

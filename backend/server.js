@@ -21,17 +21,14 @@ const readData = () => {
 };
 const writeData = (data) => fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
 
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || authHeader !== SECRET_TOKEN) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
-    }
+const getDataSource = (req) => req.headers['x-data-source'] === 'local' ? 'local' : 'pockethost';
+
+const extractToken = (req, res, next) => {
+    req.rawToken = req.headers['authorization'] || '';
     next();
 };
 
-const getDataSource = (req) => req.headers['x-data-source'] === 'local' ? 'local' : 'pockethost';
-
-app.get('/api/notes', async (req, res) => {
+app.get('/api/notes', extractToken, async (req, res) => {
     try {
         if (getDataSource(req) === 'pockethost') {
             const response = await fetch(POCKETHOST_URL);
@@ -44,16 +41,24 @@ app.get('/api/notes', async (req, res) => {
     } catch (error) { res.status(500).json({ error: 'Internal Server Error' }); }
 });
 
-app.post('/api/notes', authenticateToken, async (req, res) => {
+app.post('/api/notes', extractToken, async (req, res) => {
     try {
         const { title, content } = req.body;
         if (!title || !content) return res.status(400).json({ error: 'Bad Request' });
 
         if (getDataSource(req) === 'pockethost') {
+            if (!req.rawToken) return res.status(401).json({ error: 'Unauthorized: Token required for Instructor Mode' });
+            const authHeader = req.rawToken.startsWith('Bearer ') ? req.rawToken : `Bearer ${req.rawToken}`;
+
+            const pocketHostPayload = { title, content, user_id: 2 };
+
             const response = await fetch(POCKETHOST_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, content })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': authHeader
+                },
+                body: JSON.stringify(pocketHostPayload)
             });
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));
@@ -62,6 +67,8 @@ app.post('/api/notes', authenticateToken, async (req, res) => {
             const data = await response.json();
             return res.status(201).json({ id: data.id, title: data.title, content: data.content });
         }
+
+        if (req.rawToken !== SECRET_TOKEN) return res.status(401).json({ error: 'Unauthorized: Invalid local token' });
         const notes = readData();
         const newNote = { id: crypto.randomUUID(), title, content };
         notes.push(newNote);
@@ -70,17 +77,24 @@ app.post('/api/notes', authenticateToken, async (req, res) => {
     } catch (error) { res.status(500).json({ error: 'Internal Server Error' }); }
 });
 
-app.patch('/api/notes/:id', authenticateToken, async (req, res) => {
+app.patch('/api/notes/:id', extractToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { title, content } = req.body;
         if (!title || !content) return res.status(400).json({ error: 'Bad Request' });
 
         if (getDataSource(req) === 'pockethost') {
+            if (!req.rawToken) return res.status(401).json({ error: 'Unauthorized: Token required for Instructor Mode' });
+            const authHeader = req.rawToken.startsWith('Bearer ') ? req.rawToken : `Bearer ${req.rawToken}`;
+            const pocketHostPayload = { title, content, user_id: 2 };
+
             const response = await fetch(`${POCKETHOST_URL}/${id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, content })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': authHeader
+                },
+                body: JSON.stringify(pocketHostPayload)
             });
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));
@@ -90,6 +104,8 @@ app.patch('/api/notes/:id', authenticateToken, async (req, res) => {
             const data = await response.json();
             return res.status(200).json({ id: data.id, title: data.title, content: data.content });
         }
+
+        if (req.rawToken !== SECRET_TOKEN) return res.status(401).json({ error: 'Unauthorized: Invalid local token' });
         const notes = readData();
         const index = notes.findIndex(n => n.id === id);
         if (index === -1) return res.status(404).json({ error: 'Not Found' });
@@ -99,11 +115,18 @@ app.patch('/api/notes/:id', authenticateToken, async (req, res) => {
     } catch (error) { res.status(500).json({ error: 'Internal Server Error' }); }
 });
 
-app.delete('/api/notes/:id', authenticateToken, async (req, res) => {
+app.delete('/api/notes/:id', extractToken, async (req, res) => {
     try {
         const { id } = req.params;
+
         if (getDataSource(req) === 'pockethost') {
-            const response = await fetch(`${POCKETHOST_URL}/${id}`, { method: 'DELETE' });
+            if (!req.rawToken) return res.status(401).json({ error: 'Unauthorized: Token required for Instructor Mode' });
+            const authHeader = req.rawToken.startsWith('Bearer ') ? req.rawToken : `Bearer ${req.rawToken}`;
+
+            const response = await fetch(`${POCKETHOST_URL}/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': authHeader }
+            });
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));
                 const msg = errData.message === "Only admins can perform this action." ? "Admin rights required to delete." : (errData.message || 'Upstream API Error');
@@ -111,6 +134,8 @@ app.delete('/api/notes/:id', authenticateToken, async (req, res) => {
             }
             return res.status(200).json({ message: 'Deleted successfully' });
         }
+
+        if (req.rawToken !== SECRET_TOKEN) return res.status(401).json({ error: 'Unauthorized: Invalid local token' });
         let notes = readData();
         const len = notes.length;
         notes = notes.filter(n => n.id !== id);

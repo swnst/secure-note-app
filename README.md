@@ -4,7 +4,7 @@ A lightweight, secure full-stack web application for managing text notes. Built 
 
 ## Features
 - **Two-Way Data Routing**: Seamlessly switch between Local File System (Public Mode) and PocketHost API (Instructor Mode).
-- **Secure Operations**: Create, update, and delete actions are protected by a Secret Token.
+- **Dynamic Authentication**: Handles multiple authorization contexts securely via backend middleware.
 - **Modern UI/UX**: Features Dark Mode, Grid Layout, Markdown support, and Optimistic UI updates.
 
 ## Prerequisites
@@ -55,5 +55,7 @@ A lightweight, secure full-stack web application for managing text notes. Built 
 
 ## Usage
 - The application features **Two-Way Data Routing**: Public Mode (Local FS) and Instructor Mode (PocketHost API).
-- **Authentication Requirement:** For security compliance, all data mutation operations (Create, Update, Delete) in **BOTH** modes strictly require the `SECRET_TOKEN`.
-- You must enter the valid `SECRET_TOKEN` in the UI context to unlock the ability to submit the form or modify existing records. Reading notes (GET) remains publicly accessible without a token across all modes.
+- **Authentication Requirement:** For security compliance, all data mutation operations (Create, Update, Delete) strictly require a valid token.
+- **Dynamic Token Injection:** - In **Public Mode**, enter your local `SECRET_TOKEN` from the `.env` file into the UI.
+  - In **Instructor Mode**, enter the external target database token (e.g., `20260301eink`).
+- The Express.js backend acts as a secure proxy, automatically handling the formatting of the `Authorization` header (injecting the `Bearer` prefix) and fulfilling schema requirements before reaching the upstream PocketHost server.

@@ -28,6 +28,10 @@ const extractToken = (req, res, next) => {
     next();
 };
 
+app.get('/', (req, res) => {
+    res.status(200).send('Backend is awake and running!');
+});
+
 app.get('/api/notes', extractToken, async (req, res) => {
     try {
         if (getDataSource(req) === 'pockethost') {
